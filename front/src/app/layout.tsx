@@ -1,4 +1,5 @@
-import Layout from "@/components/layout/layout";
+import  Layout  from "@/components/layout/layout";  // Importando com a sintaxe normal
+
 import { ChakraProvider } from "@chakra-ui/react";
 import type { Metadata } from "next";
 import { ReactNode } from "react";
@@ -8,13 +9,12 @@ export const metadata: Metadata = {
   description: "Avaliações de locais turísticos e eventos",
 };
 
-
-export function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body style={{backgroundColor: "#F5F8FA"}}>
+      <body style={{ backgroundColor: "#F5F8FA" }}>
         <ChakraProvider>
-            <Layout> {children}</Layout>        
+          <Layout>{children}</Layout>  
         </ChakraProvider>
       </body>
     </html>

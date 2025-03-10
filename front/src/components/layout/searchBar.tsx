@@ -8,7 +8,7 @@ interface SearchBarProps {
   title: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, turnBack, title }) => {
+export  function SearchBar({ onSearch, turnBack, title }: SearchBarProps) {
   const [search, setSearch] = useState("");
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,6 +53,4 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, turnBack, title }) => {
       )}
     </Box>
   );
-};
-
-export default SearchBar;
+}

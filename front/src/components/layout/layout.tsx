@@ -1,8 +1,7 @@
 // src/components/Layout.tsx
 import { Box, Container, Flex } from "@chakra-ui/react";
 import { ReactNode } from "react";
-import Header from "../layout/header";
-
+import {Header} from "./header"
 
 interface LayoutProps {
   children: ReactNode;

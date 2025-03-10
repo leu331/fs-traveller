@@ -3,7 +3,7 @@
 import Image from "next/image";
 import logoSvg from "../../assets/Logo.png";
 import { Box, Button, Container, Flex, Link, Spacer } from "@chakra-ui/react";
-import SearchBar from "../layout/searchBar";
+import {SearchBar} from "../layout/searchBar";
 import { useRouter } from "next/navigation";
 import { FaArrowLeft } from "react-icons/fa6";
 

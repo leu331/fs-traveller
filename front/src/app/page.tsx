@@ -14,7 +14,7 @@ const places = [
 
 ];
 
-export function HomePage() {
+export default function HomePage() {
   const router = useRouter()
 
   useEffect(() => {

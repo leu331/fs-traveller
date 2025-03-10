@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Container, Flex, Grid, Heading, Button, ButtonGroup, Select, Text, Box } from "@chakra-ui/react";
 import Image from "next/image";
 import {Header} from "../../components/layout/header";
-import Card from "../../components/cards/card";
+import {Card} from "../../components/cards/card";
 import sadEmojiPng from "../../assets/Emoji.png";
 
 const cities = [
