@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import happyEmojiPng from "../../assets/happyEmojiPng.png";
 import Image from "next/image";
 
-export function ThankYouPage() {
+export default function ThankYouPage() {
   const router = useRouter();
 
   return (

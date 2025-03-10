@@ -30,7 +30,7 @@ const emphasiData = {
 
 const categories = ["Todos", "Pontos Turísticos", "Comida & Bebida", "Eventos Organizados"];
 
-export function CityPage() {
+export default function CityPage() {
   const generateSlug = (text: string) => {
     return text
       .toLowerCase()

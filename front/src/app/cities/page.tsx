@@ -14,7 +14,7 @@ const cities = [
   { name: "Águas Mornas", description: "Cidade tranquila e relaxante", image: "/assets/aguasMornas.png", locations: 13 },
 ];
 
-export function CitiesPage() {
+export default function CitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [filterType, setFilterType] = useState("all");

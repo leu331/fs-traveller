@@ -102,7 +102,7 @@ const topRated: Event[] = [
   },
 ];
 
-export function EventPage() {
+export default function EventPage() {
   const { id } = useParams();
   const router = useRouter();
 
