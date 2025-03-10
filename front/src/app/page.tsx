@@ -3,64 +3,46 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { Box, Button, Container, Flex, Grid, Heading, Text } from "@chakra-ui/react";
-import Image from "next/image";
-import Link from "next/link";
+import {Header} from "@/components/layout/header";
+import {Card} from "@/components/cards/card";
 
 const places = [
   { name: "Florianópolis", locations: 98, image: "/assets/floripa.png", offset: "0px" },
-  { name: "Blumenau", locations: 29, image: "/assets/blumenau.png", offset: "32px" },
+  { name: "Blumenau", locations: 29, image: "/assets/blumenau.png", offset: "70px" },
   { name: "Bombinhas", locations: 43, image: "/assets/bombinhas.png", offset: "0px" },
-  { name: "Águas Mornas", locations: 13, image: "/assets/aguasMornas.png", offset: "32px" },
+  { name: "Águas Mornas", locations: 13, image: "/assets/aguasMornas.png", offset: "70px" },
 
 ];
 
-export default function HomePage() {
+export function HomePage() {
   const router = useRouter()
 
   useEffect(() => {
-    document.body.style.overflow = "hidden"; // Remove a rolagem
+    document.body.style.overflow = "hidden"; 
     return () => {
-      document.body.style.overflow = "auto"; // Restaura ao sair da página
+      document.body.style.overflow = "auto"; 
     };
   }, []);
   return (
 
-    <Container maxW="80rem" px={6} py={16} >
-  <Heading as="h2" size="xl" mb={8}>
-    Selecione uma cidade
-  </Heading>
-
-  <Grid 
-    templateColumns="repeat(4, 1fr)"
-    gap={6} 
-    justifyContent="center"
-    justifyItems="center"
-    alignItems="center"
-    
-  >
-    {places.map((place) => (
-      <Box 
-        key={place.name} 
-        bg="white" 
-        borderRadius="16px" 
-        boxShadow="lg" 
-        overflow="hidden"
-      >
-        <Image 
-          src={place.image} 
-          alt={place.name} 
-          width={400} 
-          height={200} 
-          style={{ width: "100%", height: "200px" }} 
-        />
-        <Box p={4}>
-          <Heading as="h3" size="md" mb={1}>{place.name}</Heading>
-          <Text fontSize="sm" color="gray.500">{place.locations} locais para explorar</Text>
-          <Button colorScheme="orange" mt={3}>Ver mais</Button>
-        </Box>
+    <Container maxW="80rem" px={6} py={16}>
+      <Header showButton={true}/>
+      <Box display="flex" alignItems="center" gap="150px">
+      <Box maxWidth="380px" display="flex" flexDirection="column" justifyContent="center" height="80vh">
+        <Heading fontSize="80px" fontWeight="650" color="#123952" mb="40px" as="h1">Viva uma Grande aventura</Heading>
+        <Text color="#617480" maxWidth="320px" fontSize="20px" lineHeight="30px" mb="48px"> Descubra locais incríveis para se visitar em cidades maravilhosas de Santa Catarina.</Text>
+        <Button onClick={() => router.push("/cities")} maxWidth="320px" bgColor="#F25D27" color="white" borderRadius="10px" paddingBlock="32px" paddingInline="56px">Descobrir todos os lugares</Button>
       </Box>
-    ))}
-  </Grid>
+
+      <Box display="grid" gridTemplateColumns="1fr 1fr" gap={8}>
+        {places.map((place)=> (
+          <Box> 
+            <Text><Card id={place.name} image={place.image} name={place.name} locations={place.locations} offset={place.offset} ></Card></Text>
+          </Box>
+        ))}
+      </Box>
+      </Box>
+      
 </Container>
 )
 }

@@ -1,4 +1,4 @@
-import Layout from "@/components/layout";
+import Layout from "@/components/layout/layout";
 import { ChakraProvider } from "@chakra-ui/react";
 import type { Metadata } from "next";
 import { ReactNode } from "react";
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <body style={{backgroundColor: "#F5F8FA"}}>
