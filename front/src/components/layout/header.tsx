@@ -23,8 +23,8 @@ export function Header({ showSearchBar = false, onSearch, title, turnBack, showB
   }
 
   return (
-    <Box as="header" position="fixed" top={0} left={0} right={0} bg="white" boxShadow="sm" zIndex={1000}>
-      <Container maxW="90rem" py={4}>
+    <Box as="header" position="fixed" top={0} left={0} right={0} bg="white" boxShadow="sm" >
+      <Container maxW="90rem" position="relative" py={4}>
         <Flex align="center">
           <Link href="/">
             <Image src={logoSvg} alt="Logo" width={150} height={50} />

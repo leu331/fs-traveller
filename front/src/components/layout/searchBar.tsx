@@ -24,17 +24,19 @@ export  function SearchBar({ onSearch, turnBack, title }: SearchBarProps) {
       </Flex>
 
       <InputGroup>
-        <InputLeftElement ml="8px" pointerEvents="none" display="flex" justifyContent="center" h="100%">
-          <MagnifyingGlass size={20} color="#F25D27" fontWeight="bold"/>
+        <InputLeftElement ml="8px" pointerEvents="none" display="flex"  _focus={{color: "#F25D27"}} justifyContent="center" h="100%">
+          <MagnifyingGlass size={20} color="#A0ACB2" fontWeight="bold" />
         </InputLeftElement>
         <Input
           placeholder="Pesquise a cidade"
+          color="#A0ACB2"
           value={search}
           onChange={handleSearch}
           size="lg"
-          borderRadius="full"
-          bg="gray.100"
-          _focus={{ borderColor: "blue.500", boxShadow: "outline" }}
+          border="1px solid"
+          borderColor="#DCE2E5"
+          bg="#F5F8FA"
+          _focus={{  }}
         />
       </InputGroup>
 

@@ -1,14 +1,15 @@
 import { FaCamera, FaUtensils, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 
 export function getIconForCategory(category: string) {
+  const categoryFormatted = category.replace(/_/g, " ").toLowerCase();
   switch (category) {
-    case 'Comida e Bebida':
+    case 'comida_e_bebida':
       return FaUtensils;
-    case 'Pontos Turísticos':
+    case 'pontos_turisticos':
       return FaCamera;
-    case 'Eventos Organizados':
+    case 'eventos_organizados':
       return FaCalendarAlt;
     default:
-      return FaMapMarkerAlt; // ícone padrão, caso a categoria não corresponda a nenhum dos casos
+      return FaMapMarkerAlt;
   }
 };

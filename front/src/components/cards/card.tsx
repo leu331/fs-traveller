@@ -1,28 +1,24 @@
+import api from "@/api/api";
 import { Box, Heading, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
+import { City } from "@/types/city";
 
 interface CardProps {
   id: string;
   name: string;
   description?: string;
   image: string;
-  locations: number;
-  offset?: string;
+  foodAndDrinksCount?: number;
+  touristSpotsCount?: number
+  organizedEventsCount?: number
+  totalLocals: number
 }
 
-const generateSlug = (text: string) => {
-  return text
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "");
-};
+export function Card({ id, name, description, image, foodAndDrinksCount, organizedEventsCount, touristSpotsCount, totalLocals }: CardProps) {
 
-export function Card({ id, name, description, image, locations, offset = "0px" }: CardProps) {
   return (
-    <Link href={`/local/${generateSlug(name)}`} passHref>
+    <Link href={`/local/${id}`} passHref>
       <Box
         as="a"
         bg="white"
@@ -30,7 +26,6 @@ export function Card({ id, name, description, image, locations, offset = "0px" }
         boxShadow="lg"
         overflow="hidden"
         position="relative"
-        top={offset}
         height="266px"
         width="256px"
         display="flex"
@@ -58,7 +53,7 @@ export function Card({ id, name, description, image, locations, offset = "0px" }
             {name}
           </Heading>
           <Text fontSize="sm" color="gray.600">
-            {locations} locais para explorar
+            {totalLocals} locais 
           </Text>
         </Box>
       </Box>

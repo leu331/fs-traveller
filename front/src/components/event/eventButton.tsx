@@ -3,7 +3,7 @@ import { Box, Button, Text } from "@chakra-ui/react";
 import { IoLogoWhatsapp } from "react-icons/io";
 
 interface EventButtonProps {
-  phone?: number;
+  phone?: string;
 }
 
 export function EventButton({ phone }: EventButtonProps) {

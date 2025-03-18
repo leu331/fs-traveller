@@ -1,17 +1,16 @@
 import { Box, Heading, Text, Button, Image } from "@chakra-ui/react";
 import { FaStar } from "react-icons/fa";
-import { calculateAverageRating } from "../../utils/calculateAverageRating";
 import { useState } from "react";
-import { AllReviewsModal } from "../modals/allReviewsModal";
 import { Review } from "../../types/review";
+import { AllReviewsModal } from "../modals/allReviewsModal";
 
 interface EventReviewsProps {
   reviews: Review[];
   onAddReview: () => void;
+  averageRating: number;
 }
 
-export function EventReviews({ reviews, onAddReview }: EventReviewsProps) {
-  const averageRating = calculateAverageRating(reviews);
+export function EventReviews({ reviews = [], onAddReview, averageRating }: EventReviewsProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => setIsModalOpen(true);
@@ -20,7 +19,7 @@ export function EventReviews({ reviews, onAddReview }: EventReviewsProps) {
   return (
     <Box mt={20} mb={4} display="flex" flexDirection="column">
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Heading>Avaliações</Heading>
+        <Heading color="#123952">Avaliações</Heading>
         <Text color="#F25D27" fontWeight="600" display="flex" alignItems="center" gap={2}>
           <FaStar /> {averageRating.toFixed(1).replace(".", ",")}
         </Text>
@@ -38,6 +37,7 @@ export function EventReviews({ reviews, onAddReview }: EventReviewsProps) {
             color="#A0ACB2"
             bgColor="transparent"
             onClick={handleOpenModal}
+            _hover={{ bgColor: "transparent" }}
           >
             Ver todas
           </Button>
@@ -81,15 +81,15 @@ export function EventReviews({ reviews, onAddReview }: EventReviewsProps) {
             </Box>
           ))
         ) : (
-          <Text></Text>
+          <Text>Nenhuma avaliação disponível</Text> 
         )}
       </Box>
 
-      <AllReviewsModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        reviews={reviews}
-      />
+      {isModalOpen && (
+        <Box position="fixed" top={0} left={0}  w="100vw" h="100vh" bg="rgba(18, 57, 82, 0.7)" zIndex={10}>
+          <AllReviewsModal isOpen={isModalOpen} onClose={handleCloseModal} reviews={reviews} />
+        </Box>
+      )}
     </Box>
   );
 }

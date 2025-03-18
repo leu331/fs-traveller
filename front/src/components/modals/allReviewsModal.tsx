@@ -19,8 +19,8 @@ export function AllReviewsModal({ isOpen, onClose, reviews }: ReviewsModalProps)
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent maxWidth="736px" borderRadius="20px" maxHeight="538px" h={538}>
-        <Box display="flex" alignItems="center" justifyContent="space-between" paddingInline="40px" paddingTop="30px">
+      <ModalContent maxWidth="736px" borderRadius="20px" maxHeight="490px" h={538}>
+        <Box display="flex" alignItems="center" justifyContent="space-between" paddingInline="40px" paddingBlock="10px">
           <Box display="flex" alignItems="center" gap={10}>
             <ModalHeader display="flex" gap={2} paddingInline="0px" color="#F25D27" fontWeight="600">
               <Text>Nota</Text>
@@ -78,7 +78,7 @@ export function AllReviewsModal({ isOpen, onClose, reviews }: ReviewsModalProps)
               </Box>
             ))
           ) : (
-            <Text>Não há avaliações ainda.</Text>
+            <Text color="#115D8C" paddingInline="20px">Não há avaliações ainda.</Text>
           )}
         </ModalBody>
 

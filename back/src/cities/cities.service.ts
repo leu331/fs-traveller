@@ -11,13 +11,23 @@ export class CitiesService {
   async create(data: CreateCityDto): Promise<City> {
     const cityExists = await this.prisma.city.findFirst({
       where: { name: data.name },
-  });
+    });
 
-  if (cityExists) {
+    if (cityExists) {
       throw new BadRequestException(`Cidade '${data.name}' já existe.`);
-  }
+    }
 
-  return this.prisma.city.create({ data });
+    return this.prisma.city.create({ 
+      data: {
+        name: data.name,
+        description: data.description,
+        description2: data.description2,
+        image: data.image,
+        touristSpotsCount: data.touristSpotsCount ?? 0,
+        foodAndDrinksCount: data.foodAndDrinksCount ?? 0,
+        organizedEventsCount: data.organizedEventsCount ?? 0,
+      }
+    });
   }
 
   async index(): Promise<City[]> {
@@ -36,7 +46,18 @@ export class CitiesService {
 
   async update(id: string, data: UpdateCityDto): Promise<City> {
     await this.ensureCityExists(id);
-    return this.prisma.city.update({ where: { id }, data });
+    return this.prisma.city.update({ 
+      where: { id }, 
+      data: {
+        name: data.name,
+        description: data.description,
+        description2: data.description2,
+        image: data.image,
+        touristSpotsCount: data.touristSpotsCount,
+        foodAndDrinksCount: data.foodAndDrinksCount,
+        organizedEventsCount: data.organizedEventsCount,
+      }
+    });
   }
 
   async remove(id: string): Promise<City> {

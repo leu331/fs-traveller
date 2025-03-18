@@ -5,12 +5,16 @@ import { CitiesService } from './cities.service';
 import { CreateCityDto } from './dto/createCity.dto';
 import { UpdateCityDto } from './dto/updateCity.dto';
 import { JwtAuthGuard } from '../auth/jwt.auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
 
-@UseGuards(JwtAuthGuard) 
+
 @Controller('cities')
 export class CitiesController {
   constructor(private readonly cityService: CitiesService) {}
 
+  @UseGuards(JwtAuthGuard, RolesGuard) 
+  @Roles("admin")
   @Post()
   async create(@Body() data: CreateCityDto) {
     try {
@@ -39,6 +43,7 @@ export class CitiesController {
     }
   }
 
+  @Roles("user", "admin")
   @Get(':id')
   async show(@Param('id') id: string) {
     try {
@@ -53,6 +58,8 @@ export class CitiesController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard) 
+  @Roles("admin")
   @Patch(':id')
   async update(@Param('id') id: string, @Body() data: UpdateCityDto) {
     try {
@@ -67,6 +74,8 @@ export class CitiesController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard) 
+  @Roles("admin")
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {

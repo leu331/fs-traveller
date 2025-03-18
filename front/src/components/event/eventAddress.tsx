@@ -8,7 +8,7 @@ export function EventAddress({ address }: EventAddressProps) {
   return (
     <>
       <Box mt={20} mb={4} display="flex" alignItems="center" justifyContent="space-between">
-        <Heading>Endereço</Heading>
+        <Heading color="#123952">Endereço</Heading>
         {address ? (
           <Button
             mt={0}

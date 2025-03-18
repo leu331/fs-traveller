@@ -3,26 +3,47 @@
 import { useEffect, useState } from "react";
 import { Container, Flex, Grid, Heading, Button, ButtonGroup, Select, Text, Box } from "@chakra-ui/react";
 import Image from "next/image";
-import {Header} from "../../components/layout/header";
-import {Card} from "../../components/cards/card";
+import { Header } from "../../components/layout/header";
+import { Card } from "../../components/cards/card";
 import sadEmojiPng from "../../assets/Emoji.png";
+import api from "../../api/api"; 
+import { City } from "@/types/city";
 
-const cities = [
-  { name: "Florianópolis", description: "A capital de Santa Catarina", image: "/assets/floripa.png", locations: 98 },
-  { name: "Blumenau", description: "Famosa pela Oktoberfest", image: "/assets/blumenau.png", locations: 29 },
-  { name: "Bombinhas", description: "Praias paradisíacas", image: "/assets/bombinhas.png", locations: 43 },
-  { name: "Águas Mornas", description: "Cidade tranquila e relaxante", image: "/assets/aguasMornas.png", locations: 13 },
-];
+interface ApiResponse {
+  statusCode: number;
+  message: string;
+  cities: City[];
+}
 
 export default function CitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [filterType, setFilterType] = useState("all");
+  const [cities, setCities] = useState<City[]>([]); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "auto";
+    fetchCities();
   }, []);
 
+  async function fetchCities() {
+    try {
+      setLoading(true);
+      setError(false);
+  
+      const response = await api.get<ApiResponse>('/cities');
+  
+  
+      setCities(response.data.cities || []);
+    } catch (error: any) {
+      console.error("Erro ao buscar cidades:", error.response?.data || error.message);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }
   const handleSearch = (query: string) => {
     setSearchQuery(query.toLowerCase());
   };
@@ -37,19 +58,8 @@ export default function CitiesPage() {
 
   const filteredCities = cities
     .filter((city) => city.name.toLowerCase().includes(searchQuery))
-    .filter((city) => {
-      if (filterType === "mostAccessed") {
-        return city.locations > 30;
-      }
-      return true;
-    })
-    .sort((a, b) => {
-      if (sortOrder === "asc") {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
-    });
+    .filter((city) => (filterType === "mostAccessed" ? city.organizedEventsCount > 30 : true))
+    .sort((a, b) => (sortOrder === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)));
 
   return (
     <>
@@ -61,42 +71,46 @@ export default function CitiesPage() {
           </Heading>
           <Flex gap={4}>
             <ButtonGroup variant="outline" spacing={4}>
-              <Button
-                onClick={() => handleFilterTypeChange("all")}
-                colorScheme={filterType === "all" ? "blue" : undefined}
-              >
+              <Button onClick={() => handleFilterTypeChange("all")} colorScheme={filterType === "all" ? "blue" : undefined}>
                 Todas
               </Button>
-              <Button
-                onClick={() => handleFilterTypeChange("mostAccessed")}
-                colorScheme={filterType === "mostAccessed" ? "blue" : undefined}
-              >
+              <Button onClick={() => handleFilterTypeChange("mostAccessed")} colorScheme={filterType === "mostAccessed" ? "blue" : undefined}>
                 Mais Acessadas
               </Button>
             </ButtonGroup>
-            <Select
-              value={sortOrder}
-              onChange={handleSortChange}
-              maxW="200px"
-              placeholder="Ordenar por..."
-              ml="auto"
-            >
+            <Select value={sortOrder} onChange={handleSortChange} maxW="200px" placeholder="Ordenar por..." ml="auto">
               <option value="asc">A a Z</option>
               <option value="desc">Z a A</option>
             </Select>
           </Flex>
         </Flex>
-        {filteredCities.length === 0 ? (
+
+        {loading ? (
+          <Text textAlign="center" fontSize="lg" fontWeight="bold" color="gray.600">
+            Carregando cidades...
+          </Text>
+        ) : error ? (
+          <Text textAlign="center" fontSize="lg" fontWeight="bold" color="red.500">
+            Erro ao carregar cidades. Tente novamente mais tarde.
+          </Text>
+        ) : filteredCities.length === 0 ? (
           <Box textAlign="center" display="flex" flexDirection="column" justifyContent="center" alignItems="center" mt={6} minHeight="50vh">
             <Image src={sadEmojiPng} alt="Nada encontrado" width={100} height={100} />
-            <Text fontSize="lg" fontWeight="bold" mt="32px" color="gray.600">Sem resultados.</Text>
-            <Text fontSize="lg" color="#617480" fontWeight="bold">Tente uma nova busca</Text>
+            <Text fontSize="lg" fontWeight="bold" mt="32px" color="gray.600">
+              Sem resultados.
+            </Text>
+            <Text fontSize="lg" color="#617480" fontWeight="bold">
+              Tente uma nova busca
+            </Text>
           </Box>
         ) : (
           <Grid templateColumns={{ base: "1fr", md: "repeat(4, 1fr)" }} gap={8}>
-            {filteredCities.map((city) => (
-              <Card id={city.name} key={city.name} {...city} />
-            ))}
+          {filteredCities.map((city) => {
+  const totalLocals = city.foodAndDrinksCount + city.touristSpotsCount + city.organizedEventsCount;
+  console.log(`Cidade: ${city.name}, Locais: ${totalLocals}`); // Verifica os valores no console
+  return <Card key={city.id} {...city} totalLocals={totalLocals} />;
+})}
+
           </Grid>
         )}
       </Container>

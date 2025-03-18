@@ -1,18 +1,20 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { AuthRequest } from '../auth/types/auth.types'; 
+import { AuthRequest } from '../auth/types/auth.types';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
-
   canActivate(context: ExecutionContext): boolean {
-    const requiredRole = this.reflector.get<string>('role', context.getHandler());
-    if (!requiredRole) return true; 
-    const request = context.switchToHttp().getRequest<AuthRequest>(); 
+    const request = context.switchToHttp().getRequest<AuthRequest>();
     const user = request.user;
 
-    if (!user || user.role !== requiredRole) {
+    if (!user) {
+      throw new ForbiddenException('Acesso negado. Usuário não autenticado.');
+    }
+
+    // Verifica se a rota exige admin e bloqueia se o usuário não for admin
+    const isAdminRoute = context.getHandler().name !== 'index' && context.getHandler().name !== 'show';
+    
+    if (isAdminRoute && user.role !== 'admin') {
       throw new ForbiddenException('Acesso negado. Permissão insuficiente.');
     }
 

@@ -17,7 +17,6 @@ export function InfoCard({ icon, number, label }: InfoCardProps) {
       direction="column"
       height="250px"
       textAlign="left"
-      position="relative"
       border="1px solid"
       borderColor="#DCE2E5"
       maxWidth="160px"

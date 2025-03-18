@@ -1,60 +1,112 @@
-"use client"; 
+"use client";  
 
-import { Box, Heading, Text, SimpleGrid, Tabs, TabList, Tab, TabPanels, TabPanel } from "@chakra-ui/react";
+import { Box, Heading, Text, SimpleGrid, Tabs, TabList, Tab } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
-import { useState } from "react";
-import {InfoCard} from "../../../components/cards/infoCard";
-import {TopRatedCard} from "../../../components/cards/topRatedCard"; 
+import { useEffect, useState } from "react";
+import { InfoCard } from "../../../components/cards/infoCard";
+import { FaCamera } from "react-icons/fa";
+import { Header } from "@/components/layout/header";
+import api from "@/api/api";
+import { City } from "@/types/city";
+import { TopRatedCard } from "@/components/cards/topRatedCard";  
 import Emphasis from "../../../components/event/ui/emphasis";
-import { FaCalendarAlt, FaCamera, FaUtensils } from "react-icons/fa";
-import {Header} from "@/components/layout/header";
+import { capitalizeFirstLetterOfEachWord } from "@/utils/captalizeFirstLetterOfEachWorld";
 
-const cities = [
-  { id: "florianopolis", name: "Florianópolis", description: "A capital do estado de Santa Catarina no sul do Brasil, é majoritariamente constituída pela Ilha de Santa Catarina, com 54 km de comprimento.", image: "/assets/floripaDetails.png", locations: 67, food: 20, events: 11 },
-  { id: "blumenau", name: "Blumenau", description: "Famosa pela Oktoberfest, é um dos principais polos industriais do estado de Santa Catarina.", image: "/assets/floripaDetails.png", locations: 29, food: 3, events: 7 },
-  { id: "bombinhas", name: "Bombinhas", description: "Praias paradisíacas e natureza exuberante fazem desta cidade um destino turístico muito procurado.", image: "/assets/bombinhas.png", locations: 43, food: 10, events: 5 },
-  { id: "aguas-mornas", name: "Águas Mornas", description: "Cidade tranquila e relaxante, famosa por suas águas termais.", image: "/assets/aguasMornas.png", locations: 13, food: 8, events: 3 },
-];
+interface Event {
+  id: string;
+  name: string;
+  category: string;
+  rating: number;
+  image: string;
+  cityId: string;
+  description: string;
+}
 
-const topRated = [
-  { name: "Doce & Companhia", category: "Comida & Bebida", rating: 4.7, image: "/assets/doces.png", id: "doce--companhia" },
-  { name: "Lagoa da Conceição", category: "Pontos Turísticos", rating: 5.0, image: "/assets/lagoa.png", id: "lagoa-conceicao" },
-  { name: "Praia-do Campeche", category: "Pontos Turísticos", rating: 4.9, image: "/assets/campeche.png", id: "praia-do-campeche" },
-  { name: "Expo Tattoo Floripa", category: "Eventos Organizados", rating: 5.0, image: "/assets/tattoo.png", id: "expo-tattoo" },
-];
+interface ApiResponse {
+  statusCode: number;
+  message: string;
+  events: Event[];
+}
 
-const emphasiData = {
-  name: "Praia dos Ingleses",
-  description: "Uma parte do paraíso na terra. Frequentemente com águas claras em tons verdes e azuis. Um dos locais mais preferidos por turistas de viajantes"
-};
-
-const categories = ["Todos", "Pontos Turísticos", "Comida & Bebida", "Eventos Organizados"];
+const categories = ["Todos", "Pontos Turísticos", "Comida E Bebida", "Eventos Organizados"];
 
 export default function CityPage() {
-  const generateSlug = (text: string) => {
-    return text
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/ç/g, "c")
-      .replace(/ñ/g, "n")
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "");
-  };
-
   const { id } = useParams();
-  const city = cities.find((city) => generateSlug(city.name) === id);
-
+  const [city, setCity] = useState<City | null>(null);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const [topRatedEvent, setTopRatedEvent] = useState<Event | null>(null);
+
+  useEffect(() => {
+    if (!id) return;
+    fetchCity();
+    fetchEvents();
+    fetchTopRatedEventForCity();
+  }, [id]);
+
+  async function fetchCity() {
+    try {
+      const response = await api.get<{ city: City }>(`/cities/${id}`);
+      setCity(response.data.city);
+    } catch (error) {
+      console.error("Erro ao buscar cidade:", error);
+      setCity(null);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function fetchTopRatedEventForCity() {
+    try {
+      const response = await api.get<{ event: Event }>(`/events/${id}/top-rated`);
+      setTopRatedEvent(response.data.event);
+    } catch (error) {
+      console.error("Erro ao buscar evento mais bem avaliado:", error);
+      setTopRatedEvent(null);
+    }
+  }
+
+  async function fetchEvents() {
+    try {
+      const response = await api.get<ApiResponse>("/events");
+      console.log('Resposta da API:', response.data);
+  
+      if (Array.isArray(response.data.events)) {
+        const filteredEvents = response.data.events.filter((event) => event.cityId === id);
+        setEvents(filteredEvents);
+      } else {
+        console.error("A chave 'events' não contém um array ou não foi encontrada:", response.data);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar eventos:", error);
+    }
+  }
+
+  function getTopRatedItems() {
+    return events.sort((a, b) => b.rating - a.rating).slice(0, 4);
+  }
 
   function handleTurnBack() {
     window.history.back();
   }
 
-  if (!city) {
+  if (loading) {
     return (
       <Box p={8} textAlign="center">
-        <Heading as="h1" size="2xl" color="red.500">Cidade não encontrada</Heading>
+        <Heading as="h1" size="lg" color="gray.500">
+          Carregando...
+        </Heading>
+      </Box>
+    );
+  }
+
+  if (!city) {
+    return (
+      <Box p={8} textAlign="center" h="90vh" display="flex" flexDirection="column" justifyContent="center">
+        <Heading as="h1" size="2xl" color="red.500">
+          Cidade não encontrada
+        </Heading>
         <Text color="gray.600">Desculpe, não conseguimos encontrar a cidade solicitada.</Text>
       </Box>
     );
@@ -62,25 +114,20 @@ export default function CityPage() {
 
   return (
     <Box>
-      <Header 
-        title={city.name} 
-        showSearchBar={false} 
-        turnBack={handleTurnBack}
-      />
-
-      <Box 
-        w="100%" 
-        h="340px" 
+      <Header title={city.name} showSearchBar={false} turnBack={handleTurnBack} />
+      <Box
+        h="340px"  
+        w="100%"   
         bgImage={`url(${city.image})`} 
-        bgSize="cover" 
-        bgPosition="center" 
-        position="relative" 
+        bgSize="cover"  
+        bgPosition="center"
+        m={0}  
+        p={0}  
       />
-
       <Box p={8} maxW="1200px" mx="auto">
-        <Box maxW="1280px" mx="auto" display="flex" gap="110px">
+        <Box maxW="1280px" mx="auto" display="flex" justifyContent="space-between" gap="110px">
           <Box maxWidth="480px">
-            <Heading as="h1" display="flex" flexDirection="column" size="2xl" color="blue.900" mb={4}>
+            <Heading as="h1" size="2xl" color="blue.900" mb={4}>
               {city.name}
             </Heading>
             <Text fontSize="lg" color="gray.600" mb={6}>
@@ -88,56 +135,68 @@ export default function CityPage() {
             </Text>
           </Box>
 
-          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} mb={8}>
-            <InfoCard icon={FaCamera} number={city.locations} label="Pontos Turísticos" />
-            <InfoCard icon={FaUtensils} number={city.food} label="Comida e Bebida" />
-            <InfoCard icon={FaCalendarAlt} number={city.events} label="Eventos Organizados" />
+          <Box>
+            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} mb={8}>
+              <InfoCard 
+                icon={FaCamera} 
+                number={city.touristSpotsCount ?? 0} 
+                label="Pontos Turísticos" 
+              />
+              <InfoCard 
+                icon={FaCamera} 
+                number={city.foodAndDrinksCount ?? 0} 
+                label="Comida & Bebida" 
+              />
+              <InfoCard 
+                icon={FaCamera} 
+                number={city.organizedEventsCount ?? 0} 
+                label="Eventos Organizados" 
+              />
+            </SimpleGrid>
+          </Box>         
+        </Box>
+
+        <Box mb={8}>
+          <Heading as="h2" size="xl" color="blue.900" mb="25px">
+            Top Avaliados
+          </Heading>
+          <SimpleGrid columns={{ base: 1, md: 4 }} spacing={12}>
+            {getTopRatedItems().map((item, index) => (
+              <TopRatedCard key={index} event={item} />
+            ))}
           </SimpleGrid>
         </Box>
 
-        <Heading as="h2" size="xl" color="blue.900" mb="32px">
-          Top avaliados
-        </Heading>
-        <SimpleGrid columns={{ base: 1, md: 4 }} spacing={6}>
-          {topRated.map((place, index) => (
-            <TopRatedCard place={place} key={index} />
-          ))}
-        </SimpleGrid>
+        {topRatedEvent && <Emphasis  emphasi={{ id:topRatedEvent.id, name: topRatedEvent.name, description: topRatedEvent.description, image: topRatedEvent.image }} />}
 
-        <Box mb="80px">
-          <Emphasis emphasi={emphasiData} />
-        </Box>
-
-        <Tabs onChange={(index) => setSelectedCategory(categories[index])}>
+        <Box mb={8} mt="80px">
           <Box display="flex" justifyContent="space-between">
-            <Heading as="h2" size="xl" color="blue.900">
-              Conheça todos
+            <Heading as="h2" size="xl" color="blue.900" mb={4}>
+              Conheça Todos
             </Heading>
-            <TabList mb="32px">
-              {categories.map((category) => (
-                <Tab color="#123952" fontWeight="600" _selected={{ borderColor: "#F25D27" }} key={category}>
-                  {category} 
-                </Tab>
-              ))}
-            </TabList>
+
+            <Tabs onChange={(index) => setSelectedCategory(categories[index])}>
+              <TabList mb="25px">
+                {categories.map((category, index) => (
+                  <Tab key={index}>{category}</Tab>
+                ))}
+              </TabList>
+            </Tabs>
           </Box>
 
-          <TabPanels>
-            {categories.map((_, index) => (
-              <TabPanel key={index}>
-                <SimpleGrid columns={{ base: 1, md: 4 }} spacing={6}>
-                  {topRated.filter((place) => 
-                    selectedCategory === "Todos" || place.category === selectedCategory
-                  ).map((place) => (
-                    <TopRatedCard place={place} key={place.id} />
-                  ))}
-                </SimpleGrid>
-              </TabPanel>
-            ))}
-          </TabPanels>
-        </Tabs>
+          <SimpleGrid columns={{ base: 1, md: 4 }} spacing={6}>
+            {events
+              .filter(
+                (event) =>
+                  selectedCategory === "Todos" ||
+                  capitalizeFirstLetterOfEachWord(event.category.replace(/_/g, " ")) === selectedCategory
+              )
+              .map((event) => (
+                <TopRatedCard key={event.id} event={event} />
+              ))}
+          </SimpleGrid>
+        </Box>
       </Box>
     </Box>
   );
-};
-
+}

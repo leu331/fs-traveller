@@ -10,7 +10,7 @@ export function EventImage({ category, image }: EventImageProps) {
   const IconComponent = getIconForCategory(category);
   return (
     <Box flex={1} maxW="50%" height="704px" position="relative">
-      <Image position="relative" width="100%" height="100%" objectFit="cover" borderRadius="16px" src={image} />
+      <Image mt={3} position="absolute" width="100%" height="100%" objectFit="cover" borderRadius="16px" src={image} />
       {IconComponent && (
         <Icon
           as={IconComponent}

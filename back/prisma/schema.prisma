@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -25,29 +19,43 @@ enum UserRole {
 }
 
 model City {
-  id             String   @id @default(uuid())
-  name           String
-  description    String
-  description2   String?
-  image          String
-  locationsCount Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                   String   @id @default(uuid())
+  name                 String
+  description          String
+  description2         String?
+  image                String
+  touristSpotsCount    Int      @default(0)
+  foodAndDrinksCount   Int      @default(0)
+  organizedEventsCount Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   Event Event[]
 }
 
 model Event {
-  id       String          @id @default(uuid())
-  name     String
-  category EventCategories
-  rating   Float           @default(0)
-  image    String
-  cityId   String
-  city     City            @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  id          String          @id @default(uuid())
+  name        String
+  category    EventCategories
+  rating      Float           @default(0)
+  description String
+  image       String
+  phone       String          @default("Telefone não disponível")
+  address     String          @default("Endereço não disponível")
+  cityId      String
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  schedules   EventSchedule[]
+  City        City            @relation(fields: [cityId], references: [id])
+}
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model EventSchedule {
+  id          String @id @default(uuid())
+  eventId     String
+  day         String
+  openingTime String
+  closingTime String
+  event       Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model User {
@@ -55,7 +63,7 @@ model User {
   name      String
   email     String   @unique
   password  String
-  role      UserRole
+  role      UserRole @default(user)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -1,11 +1,13 @@
 import { Box, Heading, Text } from "@chakra-ui/react";
-import {OpeningHours} from "./openingHours"; 
+import { OpeningHours } from "./openingHours";
+import { formatTime } from "@/utils/formatTime";
 
 interface OpeningHoursSectionProps {
-  hours: { day: string; status: string }[]; 
+  schedules?: { day: string; openingTime: string; closingTime: string }[];
 }
 
-export function OpeningHoursSection ({ hours }: OpeningHoursSectionProps) {
+export function OpeningHoursSection({ schedules = [] }: OpeningHoursSectionProps) { 
+
   return (
     <Box marginBottom={4}>
       <Heading mt={5} color="#123952" fontWeight="700" as="h3">
@@ -15,16 +17,21 @@ export function OpeningHoursSection ({ hours }: OpeningHoursSectionProps) {
       <Box borderBottom="1px solid #DCE2E5" mt={4} />
 
       <Box mt={8} display="flex" gap={2} flexWrap="wrap">
-        {hours.length > 0 ? (
-          hours.map((eventHour) => (
-            <OpeningHours key={eventHour.day} day={eventHour.day} status={eventHour.status} />
+        {schedules.length > 0 ? (
+          schedules.map((eventSchedule, index) => (
+            <OpeningHours 
+              key={`${eventSchedule.day}-${index}`} // Chave única combinando o dia e o índice
+              day={eventSchedule.day} 
+              openingTime={formatTime(eventSchedule.openingTime)} 
+              closingTime={formatTime(eventSchedule.closingTime)} 
+            />
           ))
         ) : (
-          <Text>Os horários não estão disponíveis</Text>
+          <Text color="#123952">Os horários não estão disponíveis</Text>
         )}
       </Box>
     </Box>
   );
-};
+}
 
 export default OpeningHoursSection;
