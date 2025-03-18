@@ -39,20 +39,6 @@ export  function SearchBar({ onSearch, turnBack, title }: SearchBarProps) {
           _focus={{  }}
         />
       </InputGroup>
-
-      {search && (
-        <Flex justify="flex-start" mt={4}>
-          <Button
-            colorScheme="blue"
-            variant="outline"
-            onClick={turnBack}
-            w="auto"
-            borderRadius="full"
-          >
-            Voltar
-          </Button>
-        </Flex>
-      )}
     </Box>
   );
 }

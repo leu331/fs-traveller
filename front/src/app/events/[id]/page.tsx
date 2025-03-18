@@ -11,7 +11,7 @@ import { EventButton } from "@/components/event/eventButton";
 import { EventReviews } from "@/components/event/eventReviews";
 import { EventInfo } from "@/components/event/eventInfo";
 import { AddReviewsModal } from "@/components/modals/addReviewModal";
-import { ThankYouModal } from "@/components/modals/reviewConfirmationModal"; 
+import { ThankYouModal } from "@/components/modals/thankYouModal"; 
 import { Review } from "@/types/review";
 import api from "@/api/api";
 
@@ -40,6 +40,7 @@ export default function EventPage() {
   const [selectedStars, setSelectedStars] = useState(0);
   const [userName, setUserName] = useState("");
   const [averageRating, setAverageRating] = useState<number>(0);
+  const [userPhotoURL, setUserPhotoURL] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -60,36 +61,45 @@ export default function EventPage() {
     fetchEvent();
   }, [id]);
 
-  const handleAddReview = () => {
+  const handleAddReview = (
+    newRating: number, 
+    review: string, 
+    userName: string, 
+    userPhotoURL: string | null 
+  ) => {
     if (event) {
       const updatedReviews = Array.isArray(event.reviews) ? [...event.reviews] : [];
-
+    
       const newReviewData: Review = {
         name: userName,
-        userPhoto: "",
-        text: "",  
-        rating: selectedStars,
+        userPhoto: userPhotoURL, 
+        text: review,
+        rating: newRating,
       };
-
+    
       updatedReviews.push(newReviewData);
-
-      const totalRating = updatedReviews.reduce((sum, review) => sum + review.rating, 0);
+    
+      const totalRating = updatedReviews.reduce((sum, review) => sum + (review.rating ?? 0), 0);
       const updatedRating = totalRating / updatedReviews.length;
-
+      
+      setAverageRating(updatedRating);
+    
       setEvent({
         ...event,
-        rating: updatedRating,
+        reviews: updatedReviews,
       });
-
+  
       setAverageRating(updatedRating);
-
       setIsAddReviewModalOpen(false);
       setSelectedStars(0);
       setUserName("");
-
-      setIsThankYouModalOpen(true);
+      setNewReview("");
+    
+      setIsThankYouModalOpen(true);  // Exibe o modal de agradecimento
     }
   };
+  
+  
 
   if (loading) {
     return (
@@ -123,7 +133,7 @@ export default function EventPage() {
           <OpeningHoursSection schedules={event.schedules} />
           <EventButton phone={event.phone} />
           <EventAddress address={event.address} />
-          <EventReviews averageRating={event.rating} onAddReview={() => setIsAddReviewModalOpen(true)} reviews={event.reviews} />
+          <EventReviews averageRating={averageRating} onAddReview={() => setIsAddReviewModalOpen(true)} reviews={event.reviews} />
         </Box>
         <EventImage category={event.category} image={event.image} />
       </Flex>
@@ -144,12 +154,15 @@ export default function EventPage() {
             setSelectedStars={setSelectedStars}
             handleAddReview={handleAddReview}
             setUserName={setUserName}
+            setUserPhotoURL={setUserPhotoURL}
           />
         </Box>
       )}
 
       {isThankYouModalOpen && (
-        <ThankYouModal isOpen={isThankYouModalOpen} onClose={() => setIsThankYouModalOpen(false)} />
+        <Box position="fixed" top={0} left={0} w="100vw" h="100vh" bg="rgba(18, 57, 82, 0.7)" zIndex={10}> 
+          <ThankYouModal isOpen={isThankYouModalOpen} onClose={() => setIsThankYouModalOpen(false)} />
+        </Box>
       )}
     </Box>
   );

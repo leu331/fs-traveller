@@ -35,7 +35,6 @@ export default function CitiesPage() {
   
       const response = await api.get<ApiResponse>('/cities');
   
-  
       setCities(response.data.cities || []);
     } catch (error: any) {
       console.error("Erro ao buscar cidades:", error.response?.data || error.message);
@@ -63,7 +62,7 @@ export default function CitiesPage() {
 
   return (
     <>
-      <Header showButton={true} showSearchBar={true} onSearch={handleSearch} />
+      <Header showButton={false} showSearchBar={true} onSearch={handleSearch} />
       <Container maxW="90rem" py={12} mt="100px">
         <Flex justify="space-between" align="center" mb={6}>
           <Heading as="h1" size="2xl" fontWeight="bold" color="#123952">
@@ -107,7 +106,7 @@ export default function CitiesPage() {
           <Grid templateColumns={{ base: "1fr", md: "repeat(4, 1fr)" }} gap={8}>
           {filteredCities.map((city) => {
   const totalLocals = city.foodAndDrinksCount + city.touristSpotsCount + city.organizedEventsCount;
-  console.log(`Cidade: ${city.name}, Locais: ${totalLocals}`); // Verifica os valores no console
+  console.log(`Cidade: ${city.name}, Locais: ${totalLocals}`); 
   return <Card key={city.id} {...city} totalLocals={totalLocals} />;
 })}
 

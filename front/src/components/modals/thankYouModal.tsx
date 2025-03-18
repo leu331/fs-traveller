@@ -1,6 +1,8 @@
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Text, Box } from "@chakra-ui/react";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { useRouter } from "next/navigation";
+import smileEmojiPng from "../../assets/happyEmojiPng.png"
+import Image from "next/image";
 
 interface ReviewConfirmationModalProps {
   isOpen: boolean;
@@ -17,25 +19,27 @@ export function ThankYouModal({ isOpen, onClose }: ReviewConfirmationModalProps)
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent maxWidth="480px" borderRadius="20px" p={6} textAlign="center">
+      <ModalContent bgColor="rgba(18, 57, 82, 0.1)" maxWidth="480px" borderRadius="20px"  p={6} textAlign="center">
         <ModalHeader p={0} display="flex" flexDirection="column" alignItems="center">
-          <IoMdCheckmarkCircleOutline size={64} color="#51B853" />
-          <Text fontSize="24px" fontWeight="bold" mt={4}>Avaliação enviada!</Text>
+          <Image src={smileEmojiPng} alt=""></Image>
+          <Text fontSize="36px" color="#FFFFFF" lineHeight="34px" fontWeight="bold" mt={4}>Avaliação enviada!</Text>
         </ModalHeader>
         <ModalBody>
-          <Text fontSize="16px" color="gray.600">
-            Obrigado por compartilhar sua opinião. Sua avaliação será analisada antes da publicação.
+          <Text fontSize="16px" color="#A0ACB2">
+          Agradecemos pelo seu tempo
+          e colaboração.
           </Text>
         </ModalBody>
         <ModalFooter display="flex" flexDirection="column" gap={4}>
           <Button
-            bgColor="#51B853"
+            bgColor="#F25D27"
             color="white"
             borderRadius="10px"
             onClick={handleRedirect}
-            width="100%"
+            width="40%"
+            _hover={{bgColor: "#F25D27"}}
           >
-            Entendi
+            Disponha :)
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -38,7 +38,7 @@ export default function HomePage() {
     <Container maxW="80rem" px={6} py={16}>
       <Header showButton={true} />
       <Box display="flex" alignItems="center" gap="150px">
-        <Box maxWidth="380px" display="flex" flexDirection="column" justifyContent="center" height="80vh">
+        <Box maxWidth="380px" display="flex" flexDirection="column" justifyContent="center" height="86vh">
           <Heading fontSize="80px" fontWeight="650" color="#123952" mb="40px" as="h1">
             Viva uma Grande aventura
           </Heading>
@@ -53,6 +53,7 @@ export default function HomePage() {
             borderRadius="10px"
             paddingBlock="32px"
             paddingInline="56px"
+            _hover={{bgColor: "#F25D27"}}
           >
             Descobrir todos os lugares
           </Button>

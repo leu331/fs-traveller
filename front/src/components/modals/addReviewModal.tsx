@@ -11,12 +11,13 @@ interface AddReviewsModalProps {
   setNewReview: (review: string) => void;
   selectedStars: number;
   setSelectedStars: (stars: number) => void;
-  handleAddReview: (newRating: number, review: string, userName: string) => void;  
+  handleAddReview: (newRating: number, review: string, userName: string, userPhotoUrl: string | null) => void;  
   userName: string;
   setUserName: Dispatch<SetStateAction<string>>;
   averageRating: number;  
   totalReviews: number;  
   setAverageRating: Dispatch<SetStateAction<number>>; 
+  setUserPhotoURL: Dispatch<SetStateAction<string | null>>; 
 }
 
 const MAX_CHARACTERS = 240;
@@ -27,19 +28,19 @@ export function AddReviewsModal({
   newReview,
   setNewReview,
   selectedStars,
- 
   userName,
   setUserName,
   averageRating,
   totalReviews,
   setSelectedStars,
   handleAddReview,
-  setAverageRating
+  setAverageRating,
 }: AddReviewsModalProps) {
   const totalStars = 5;
   const [file, setFile] = useState<File | null>(null);
   const [imageURL, setImageURL] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userPhotoURL, setUserPhotoURL] = useState<string | null>(null);
 
   const handleReviewChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length <= MAX_CHARACTERS) {
@@ -53,6 +54,7 @@ export function AddReviewsModal({
       setFile(selectedFile);
       const fileURL = URL.createObjectURL(selectedFile);
       setImageURL(fileURL);
+      setUserPhotoURL(fileURL);  // Passando a URL da imagem para o componente pai
     }
   };
 
@@ -65,11 +67,14 @@ export function AddReviewsModal({
     const newTotalReviews = totalReviews + 1;
     const newRating = (averageRating * totalReviews + selectedStars) / newTotalReviews;
 
-    handleAddReview(newRating, newReview, userName);
+    const finalUserPhotoURL = userPhotoURL ? userPhotoURL : null;
+
+    handleAddReview(newRating, newReview, userName, finalUserPhotoURL);
 
     setNewReview('');
     setSelectedStars(0);
     setUserName('');
+    setUserPhotoURL(null);  
     onClose();
   };
 
@@ -103,8 +108,7 @@ export function AddReviewsModal({
                 zIndex={1}
                 onChange={handleFileChange}
               />
-              
-              <Text
+               <Text
                 position="absolute"
                 top="50%"
                 left="50%"
