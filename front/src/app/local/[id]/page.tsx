@@ -20,6 +20,7 @@ interface Event {
   image: string;
   cityId: string;
   description: string;
+  description2: string
 }
 
 interface ApiResponse {
@@ -48,6 +49,7 @@ export default function CityPage() {
   async function fetchCity() {
     try {
       const response = await api.get<{ city: City }>(`/cities/${id}`);
+      console.log("OS dados da cidade:", response)
       setCity(response.data.city);
     } catch (error) {
       console.error("Erro ao buscar cidade:", error);
@@ -69,9 +71,7 @@ export default function CityPage() {
 
   async function fetchEvents() {
     try {
-      const response = await api.get<ApiResponse>("/events");
-      console.log('Resposta da API:', response.data);
-  
+      const response = await api.get<ApiResponse>("/events");  
       if (Array.isArray(response.data.events)) {
         const filteredEvents = response.data.events.filter((event) => event.cityId === id);
         setEvents(filteredEvents);
@@ -127,11 +127,14 @@ export default function CityPage() {
       <Box p={8} maxW="1200px" mx="auto">
         <Box maxW="1280px" mx="auto" display="flex" justifyContent="space-between" gap="110px">
           <Box maxWidth="480px">
-            <Heading as="h1" size="2xl" color="blue.900" mb={4}>
+            <Heading as="h1" size="2xl" color="blue.900" mb={10}>
               {city.name}
             </Heading>
-            <Text fontSize="lg" color="gray.600" mb={6}>
+            <Text fontSize="lg" lineHeight="30px" color="#123952" mb={8}>
               {city.description}
+            </Text>
+            <Text fontSize="lg" lineHeight="30px" color="#617480" mb={6}>
+              {city.description2}
             </Text>
           </Box>
 

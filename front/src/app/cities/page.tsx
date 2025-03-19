@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Header } from "../../components/layout/header";
 import { Card } from "../../components/cards/card";
 import sadEmojiPng from "../../assets/Emoji.png";
-import api from "../../api/api"; 
+import api from "../../api/api";
 import { City } from "@/types/city";
 
 interface ApiResponse {
@@ -19,7 +19,7 @@ export default function CitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [filterType, setFilterType] = useState("all");
-  const [cities, setCities] = useState<City[]>([]); 
+  const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -43,6 +43,7 @@ export default function CitiesPage() {
       setLoading(false);
     }
   }
+
   const handleSearch = (query: string) => {
     setSearchQuery(query.toLowerCase());
   };
@@ -55,15 +56,21 @@ export default function CitiesPage() {
     setFilterType(type);
   };
 
-  const filteredCities = cities
-    .filter((city) => city.name.toLowerCase().includes(searchQuery))
+  const sortedCities = [...cities]
     .filter((city) => (filterType === "mostAccessed" ? city.organizedEventsCount > 30 : true))
-    .sort((a, b) => (sortOrder === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)));
+    .sort((a, b) => (sortOrder === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)))
+    .sort((a, b) => {
+      const aMatches = a.name.toLowerCase().includes(searchQuery) ? 1 : 0;
+      const bMatches = b.name.toLowerCase().includes(searchQuery) ? 1 : 0;
+      return bMatches - aMatches;
+    });
+
+  const hasMatchingCities = sortedCities.some(city => city.name.toLowerCase().includes(searchQuery));
 
   return (
     <>
-      <Header showButton={false} showSearchBar={true} onSearch={handleSearch} />
-      <Container maxW="90rem" py={12} mt="100px">
+      <Header showButton={true} showSearchBar={true} onSearch={handleSearch} />
+      <Container maxW="90rem" py={12} mt="50px">
         <Flex justify="space-between" align="center" mb={6}>
           <Heading as="h1" size="2xl" fontWeight="bold" color="#123952">
             Selecione uma cidade
@@ -92,7 +99,7 @@ export default function CitiesPage() {
           <Text textAlign="center" fontSize="lg" fontWeight="bold" color="red.500">
             Erro ao carregar cidades. Tente novamente mais tarde.
           </Text>
-        ) : filteredCities.length === 0 ? (
+        ) : cities.length === 0 || !hasMatchingCities ? (
           <Box textAlign="center" display="flex" flexDirection="column" justifyContent="center" alignItems="center" mt={6} minHeight="50vh">
             <Image src={sadEmojiPng} alt="Nada encontrado" width={100} height={100} />
             <Text fontSize="lg" fontWeight="bold" mt="32px" color="gray.600">
@@ -104,12 +111,16 @@ export default function CitiesPage() {
           </Box>
         ) : (
           <Grid templateColumns={{ base: "1fr", md: "repeat(4, 1fr)" }} gap={8}>
-          {filteredCities.map((city) => {
-  const totalLocals = city.foodAndDrinksCount + city.touristSpotsCount + city.organizedEventsCount;
-  console.log(`Cidade: ${city.name}, Locais: ${totalLocals}`); 
-  return <Card key={city.id} {...city} totalLocals={totalLocals} />;
-})}
+            {sortedCities.map((city) => {
+              const totalLocals = city.foodAndDrinksCount + city.touristSpotsCount + city.organizedEventsCount;
+              const isMatch = city.name.toLowerCase().includes(searchQuery);
 
+              return (
+                <Box key={city.id} opacity={isMatch ? "1" : "0.5"} transition="opacity 0.3s ease-in-out">
+                  <Card {...city} totalLocals={totalLocals} />
+                </Box>
+              );
+            })}
           </Grid>
         )}
       </Container>

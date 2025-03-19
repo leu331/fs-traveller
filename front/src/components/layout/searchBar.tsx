@@ -28,7 +28,7 @@ export  function SearchBar({ onSearch, turnBack, title }: SearchBarProps) {
           <MagnifyingGlass size={20} color="#A0ACB2" fontWeight="bold" />
         </InputLeftElement>
         <Input
-          placeholder="Pesquise a cidade"
+          placeholder="Qual cidade você procura?"
           color="#A0ACB2"
           value={search}
           onChange={handleSearch}

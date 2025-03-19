@@ -35,10 +35,10 @@ export default function HomePage() {
   }
 
   return (
-    <Container maxW="80rem" px={6} py={16}>
+    <Container maxW="80rem" px={6} py={16} mt={38}>
       <Header showButton={true} />
       <Box display="flex" alignItems="center" gap="150px">
-        <Box maxWidth="380px" display="flex" flexDirection="column" justifyContent="center" height="86vh">
+        <Box maxWidth="380px" display="flex" flexDirection="column" justifyContent="center" height="80vh">
           <Heading fontSize="80px" fontWeight="650" color="#123952" mb="40px" as="h1">
             Viva uma Grande aventura
           </Heading>

@@ -11,7 +11,7 @@ import { EventButton } from "@/components/event/eventButton";
 import { EventReviews } from "@/components/event/eventReviews";
 import { EventInfo } from "@/components/event/eventInfo";
 import { AddReviewsModal } from "@/components/modals/addReviewModal";
-import { ThankYouModal } from "@/components/modals/thankYouModal"; 
+import { ThankYouModal } from "@/components/modals/thankYoumodal"; 
 import { Review } from "@/types/review";
 import api from "@/api/api";
 
