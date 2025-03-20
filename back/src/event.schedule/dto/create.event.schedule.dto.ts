@@ -1,18 +1,21 @@
-import { IsEnum, IsNotEmpty, Matches } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsEnum, IsOptional, Matches, IsUUID } from 'class-validator';
 import { WeekDay } from '../entities/event.schedule.entity';
 
 export class CreateEventScheduleDto {
   @IsEnum(WeekDay, { message: 'O dia da semana deve ser válido (Domingo, Segunda, Terça ...)' })
   day: WeekDay;
 
-  @IsNotEmpty({ message: 'O horário de abertura é obrigatório' })
+  @IsOptional()
+  @Transform(({ value }) => (value === "" ? null : value)) 
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, { message: 'Formato inválido (HH:mm)' })
-  openingTime: string;
+  openingTime?: string | null;
 
-  @IsNotEmpty({ message: 'O horário de fechamento é obrigatório' })
+  @IsOptional()
+  @Transform(({ value }) => (value === "" ? null : value)) 
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, { message: 'Formato inválido (HH:mm)' })
-  closingTime: string;
+  closingTime?: string | null;
 
-  @IsNotEmpty({message: "Insira o id do evento"})
-  eventId: string
+  @IsUUID("4", { message: "eventId deve ser um UUID válido" })
+  eventId: string;
 }

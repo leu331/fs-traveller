@@ -50,12 +50,12 @@ model Event {
 }
 
 model EventSchedule {
-  id          String @id @default(uuid())
+  id          String  @id @default(uuid())
   eventId     String
   day         String
-  openingTime String
-  closingTime String
-  event       Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  openingTime String?
+  closingTime String?
+  event       Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model User {
